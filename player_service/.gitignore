@@ -1,0 +1,35 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# STS / Eclipse / NetBeans
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+nbproject/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# Logfiles
+*.log
+
+buildOutputCleanup.lock
+

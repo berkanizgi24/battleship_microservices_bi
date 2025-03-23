@@ -1,0 +1,5 @@
+rootProject.name = 'battleship-microservices'
+
+include 'game_service'
+include 'player_service'
+include 'shot_service'
