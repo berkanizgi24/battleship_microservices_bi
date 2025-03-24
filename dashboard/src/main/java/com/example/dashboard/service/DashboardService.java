@@ -22,10 +22,10 @@ public class DashboardService {
     }
 
     public List<GameDTO> getAllGames() {
-
-        ResponseEntity<GameDTO[]> response = restTemplate.getForEntity("http://localhost:8081/games", GameDTO[].class);
-        return List.of(response.getBody());
-
+        return circuitBreakerFactory.create("getAllGamesBreaker").run(() -> {
+            ResponseEntity<GameDTO[]> response = restTemplate.getForEntity("http://localhost:8081/games", GameDTO[].class);
+            return List.of(response.getBody());
+        });
     }
 
     public GameDTO createGame() {
