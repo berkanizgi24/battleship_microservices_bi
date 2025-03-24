@@ -46,4 +46,8 @@ public class GameService {
 
         return players == null || players.length < 2;
     }
+
+    public void deleteGame(Long gameId){
+        gameRepository.deleteById(gameId);
+    }
 }

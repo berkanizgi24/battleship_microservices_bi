@@ -2,6 +2,7 @@ package org.example.player_service.controller;
 
 import org.example.player_service.model.Ship;
 import org.example.player_service.service.ShipService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,5 +24,11 @@ public class ShipController {
     @PostMapping
     public Ship placeShip(@RequestParam Long playerId, @RequestParam int x, @RequestParam int y, @RequestParam int length, @RequestParam boolean isHorizontal){
         return shipService.placeShip(playerId,x,y,length,isHorizontal);
+    }
+
+    @DeleteMapping("/{shipId}")
+    ResponseEntity<Void> deleteShip(Long shipId){
+        shipService.deleteShip(shipId);
+        return ResponseEntity.noContent().build();
     }
 }

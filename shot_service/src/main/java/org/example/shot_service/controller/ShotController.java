@@ -2,10 +2,8 @@ package org.example.shot_service.controller;
 
 import org.example.shot_service.model.Shot;
 import org.example.shot_service.service.ShotService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/shots")
@@ -19,5 +17,11 @@ public class ShotController {
     @PostMapping
     public Shot placeShot(@RequestParam Long attackerId, @RequestParam Long defenderId,@RequestParam int x, @RequestParam int y) {
         return shotService.placeShot(attackerId,defenderId, x, y);
+    }
+
+    @DeleteMapping("/{shotId}")
+    public ResponseEntity<Void> deleteShot(Long shotId){
+        shotService.deleteShot(shotId);
+        return ResponseEntity.noContent().build();
     }
 }

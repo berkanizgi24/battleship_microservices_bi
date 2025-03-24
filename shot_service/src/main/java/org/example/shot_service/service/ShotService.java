@@ -46,4 +46,8 @@ public class ShotService {
     public List<Shot> getShootsByPlayerId(Long playerId){
         return shotRepository.findByPlayerId(playerId);
     }
+
+    public void deleteShot(Long shotId){
+        shotRepository.deleteById(shotId);
+    }
 }

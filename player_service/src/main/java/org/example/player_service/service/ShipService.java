@@ -32,6 +32,10 @@ public class ShipService {
         return shipRepository.save(ship);
     }
 
+    public void deleteShip(Long shipId){
+        shipRepository.deleteById(shipId);
+    }
+
 
 
 }

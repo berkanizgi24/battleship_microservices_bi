@@ -2,6 +2,7 @@ package org.example.player_service.controller;
 
 import org.example.player_service.model.Player;
 import org.example.player_service.service.PlayerService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,5 +24,11 @@ public class PlayerController {
     @PostMapping
     public Player createPlayer(@RequestParam Long gameId, @RequestParam String name){
         return playerService.createPlayer(gameId, name);
+    }
+
+    @DeleteMapping("/{playerId}")
+    public ResponseEntity<Void> deletePlayer(@PathVariable Long playerId){
+        playerService.deletePlayer(playerId);
+        return ResponseEntity.noContent().build();
     }
 }

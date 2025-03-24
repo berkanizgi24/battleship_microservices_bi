@@ -46,4 +46,8 @@ public class PlayerService {
         player.setName(name);
         return playerRepository.save(player);
     }
+
+    public void deletePlayer(Long playerId){
+        playerRepository.deleteById(playerId);
+    }
 }
