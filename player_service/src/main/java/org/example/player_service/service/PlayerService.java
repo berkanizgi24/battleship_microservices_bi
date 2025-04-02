@@ -4,6 +4,7 @@ import org.example.player_service.config.RabbitMQConfig;
 import org.example.player_service.dto.GameDTO;
 import org.example.player_service.model.Player;
 import org.example.player_service.repository.PlayerRepository;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,11 @@ public class PlayerService {
        return savedPlayer;
     });
 
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.SHOT_FIRED_QUEUE)
+    public void shotFired(String message){
+        System.out.println("Empfangen im playerService: " + message);
     }
 
 

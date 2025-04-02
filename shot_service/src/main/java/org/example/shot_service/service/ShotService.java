@@ -1,8 +1,10 @@
 package org.example.shot_service.service;
 
+import org.example.shot_service.config.RabbitMQConfig;
 import org.example.shot_service.dto.ShipDTO;
 import org.example.shot_service.model.Shot;
 import org.example.shot_service.repository.ShotRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -14,11 +16,13 @@ public class ShotService {
     private final RestTemplate restTemplate;
     private final ShotRepository shotRepository;
     private final Resilience4JCircuitBreakerFactory circuitBreakerFactory;
+    private final RabbitTemplate rabbitTemplate;
 
-    public ShotService(ShotRepository shotRepository, Resilience4JCircuitBreakerFactory circuitBreakerFactory) {
+    public ShotService(ShotRepository shotRepository, Resilience4JCircuitBreakerFactory circuitBreakerFactory, RabbitTemplate rabbitTemplate) {
         this.shotRepository = shotRepository;
         this.restTemplate = new RestTemplate();
         this.circuitBreakerFactory = circuitBreakerFactory;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public Shot placeShot(Long attackerId, Long defenderId, int x, int y) {
@@ -43,7 +47,10 @@ public class ShotService {
                 }
             }
             Shot shot = new Shot(attackerId, x, y, hit);
-            return shotRepository.save(shot);
+            Shot saved = shotRepository.save(shot);
+
+            rabbitTemplate.convertAndSend(RabbitMQConfig.SHOT_FIRED_QUEUE, "Schuss abgefeuert");
+            return saved;
         });
     }
 
