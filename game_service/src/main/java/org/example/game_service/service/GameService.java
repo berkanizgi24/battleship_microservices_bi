@@ -1,8 +1,10 @@
 package org.example.game_service.service;
 
+import org.example.game_service.config.RabbitMQConfig;
 import org.example.game_service.dto.PlayerDTO;
 import org.example.game_service.model.Game;
 import org.example.game_service.repository.GameRepository;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -56,5 +58,10 @@ public class GameService {
 
     public void deleteGame(Long gameId){
         gameRepository.deleteById(gameId);
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.PLAYER_CREATED_QUEUE)
+    public void handlePlayerCreated(String message){
+        System.out.println("Empfangen in gameService " +  message);
     }
 }

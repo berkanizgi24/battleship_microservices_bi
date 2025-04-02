@@ -1,8 +1,10 @@
 package org.example.player_service.service;
 
+import org.example.player_service.config.RabbitMQConfig;
 import org.example.player_service.dto.GameDTO;
 import org.example.player_service.model.Player;
 import org.example.player_service.repository.PlayerRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,10 +17,13 @@ public class PlayerService {
     private final RestTemplate restTemplate;
     private final Resilience4JCircuitBreakerFactory circuitBreakerFactory;
 
-    public PlayerService(PlayerRepository playerRepository, RestTemplate restTemplate, Resilience4JCircuitBreakerFactory circuitBreakerFactory) {
+    private final RabbitTemplate rabbitTemplate;
+
+    public PlayerService(PlayerRepository playerRepository, RestTemplate restTemplate, Resilience4JCircuitBreakerFactory circuitBreakerFactory, RabbitTemplate rabbitTemplate) {
         this.playerRepository = playerRepository;
         this.restTemplate = restTemplate;
         this.circuitBreakerFactory = circuitBreakerFactory;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public List<Player> getPlayersByGameId(Long gameId){
@@ -48,8 +53,16 @@ public class PlayerService {
         Player player = new Player();
         player.setGameId(gameId);
         player.setName(name);
-        return playerRepository.save(player);
-    });}
+
+        Player savedPlayer = playerRepository.save(player);
+
+        rabbitTemplate.convertAndSend(RabbitMQConfig.PLAYER_CREATED_QUEUE,"Player wurde erstellt");
+
+       return savedPlayer;
+    });
+
+    }
+
 
     public void deletePlayer(Long playerId){
         playerRepository.deleteById(playerId);
