@@ -10,3 +10,8 @@ Er hat folgende Funktionalitäten:
 Circuit Breaker ebenfalls eingesetzt, aufgrund Zugriff anderer Services.
 
 (Läuft trotz dashboard auf Port 8083, kann man entfernen)
+
+Assignment 3: RabbitMQ
+
+Der ShotService sendet eine Nachricht an den PlayerService, sobald ein Schuss abgefeuert wurde.
+Wird im Terminal von PlayerService (Empfänger) angezeigt.
