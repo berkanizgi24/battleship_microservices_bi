@@ -21,3 +21,5 @@ erstellt. Dieser wird im Terminal vom GameService jetzt ausgegeben.
 
 Durch Docker konnte man localhost:15672 starten und mit der Anmeldung (guest, guest) die 
 Ergebnisse mitverfolgen. 
+
+
