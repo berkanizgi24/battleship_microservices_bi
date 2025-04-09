@@ -33,7 +33,7 @@ public class PlayerService {
 
     public Player createPlayer(Long gameId, String name){
         return circuitBreakerFactory.create("createPlayerBreaker").run(() -> {
-        String gameServiceUrl = "http://localhost:8081/games/" + gameId + "/doesGameExist";
+        String gameServiceUrl = "http://game-service/games/" + gameId + "/doesGameExist";
         try{
             Boolean gameExists = restTemplate.getForObject(gameServiceUrl, Boolean.class);
 
@@ -44,7 +44,7 @@ public class PlayerService {
             throw new IllegalArgumentException("Game mit Id" + gameId + "existiert nicht");
         }
 
-        String checkUrl = "http://localhost:8081/games/" + gameId + "/canAddPlayer";
+        String checkUrl = "http://game-service/games/" + gameId + "/canAddPlayer";
         Boolean canAddPlayer = restTemplate.getForObject(checkUrl, Boolean.class);
 
         if (Boolean.FALSE.equals(canAddPlayer)){

@@ -40,7 +40,7 @@ public class GameService {
 
     public List<PlayerDTO> getPlayersInGame(Long gameId){
         return circuitBreakerFactory.create("getPlayersInGame").run(() -> {
-            String playerServiceUrl = "http://localhost:8082/players?gameId=" + gameId;
+            String playerServiceUrl = "http://player-service/players?gameId=" + gameId;
             ResponseEntity<PlayerDTO[]> response = restTemplate.getForEntity(playerServiceUrl, PlayerDTO[].class);
             return List.of(response.getBody());
         });
@@ -49,7 +49,7 @@ public class GameService {
     public Boolean canAddPlayer(Long gameId){
         return circuitBreakerFactory.create("addPlayersBreaker").run(() -> {
         Optional<Game> game = gameRepository.findById(gameId);
-        String playerServiceUrl = "http://localhost:8082/players?gameId=" + gameId;
+        String playerServiceUrl = "http://player-service/players?gameId=" + gameId;
         ResponseEntity<PlayerDTO[]> response = restTemplate.getForEntity(playerServiceUrl, PlayerDTO[].class);
         PlayerDTO[] players = response.getBody();
 

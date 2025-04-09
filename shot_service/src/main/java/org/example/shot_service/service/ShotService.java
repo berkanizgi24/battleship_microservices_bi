@@ -27,7 +27,7 @@ public class ShotService {
 
     public Shot placeShot(Long attackerId, Long defenderId, int x, int y) {
         return circuitBreakerFactory.create("placeShotBreaker").run(() -> {
-            String shipServiceUrl = "http://localhost:8082/ships/" + defenderId;
+            String shipServiceUrl = "http://player-service/ships/" + defenderId;
             ShipDTO[] ships = restTemplate.getForObject(shipServiceUrl, ShipDTO[].class);
 
             boolean hit = false;
