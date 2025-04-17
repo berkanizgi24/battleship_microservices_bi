@@ -1,9 +1,6 @@
 package com.example.dashboard.service;
 
-import com.example.dashboard.dto.GameDTO;
-import com.example.dashboard.dto.PlayerDTO;
-import com.example.dashboard.dto.ShipDTO;
-import com.example.dashboard.dto.ShotDTO;
+import com.example.dashboard.dto.*;
 import org.springframework.cloud.circuitbreaker.resilience4j.Resilience4JCircuitBreakerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,8 +26,8 @@ public class DashboardService {
     }
 
     public GameDTO createGame() {
-            return   circuitBreakerFactory.create("createGameBreaker").run(() ->
-            restTemplate.postForObject("http://game-service/games", null, GameDTO.class)
+        return circuitBreakerFactory.create("createGameBreaker").run(() ->
+                restTemplate.postForObject("http://game-service/games", null, GameDTO.class)
         );
     }
 
@@ -50,9 +47,10 @@ public class DashboardService {
 
     public PlayerDTO createPlayer(Long gameId, String name) {
         return circuitBreakerFactory.create("createPlayerBreaker").run(() -> {
-        String url = "http://player-service/players?gameId=" + gameId + "&name=" + name;
-        return restTemplate.postForObject(url, null, PlayerDTO.class);
-    });}
+            String url = "http://player-service/players?gameId=" + gameId + "&name=" + name;
+            return restTemplate.postForObject(url, null, PlayerDTO.class);
+        });
+    }
 
 
     public List<ShipDTO> getShips(Long playerId) {
@@ -72,36 +70,56 @@ public class DashboardService {
 
     public ShotDTO placeShot(Long attackerId, Long defenderId, int x, int y) {
         return circuitBreakerFactory.create("placeShotBreaker").run(() -> {
-        String url = String.format("http://shot-service/shots?attackerId=%d&defenderId=%d&x=%d&y=%d",
-                attackerId, defenderId, x, y);
-        return restTemplate.postForObject(url, null, ShotDTO.class);
-    });}
+            String url = String.format("http://shot-service/shots?attackerId=%d&defenderId=%d&x=%d&y=%d",
+                    attackerId, defenderId, x, y);
+            return restTemplate.postForObject(url, null, ShotDTO.class);
+        });
+    }
 
-    public void deleteGame(Long gameId){
-             circuitBreakerFactory.create("deleteGameBreaker").run(() -> {
+    public void deleteGame(Long gameId) {
+        circuitBreakerFactory.create("deleteGameBreaker").run(() -> {
             restTemplate.delete("http://game-service/games/" + gameId);
             return null;
         });
-        }
+    }
 
 
-    public void deletePlayer(Long playerId){
+    public void deletePlayer(Long playerId) {
         circuitBreakerFactory.create("deletePlayerBreaker").run(() -> {
-        restTemplate.delete("http://player-service/players/" + playerId);
-        return null;
-    });}
+            restTemplate.delete("http://player-service/players/" + playerId);
+            return null;
+        });
+    }
 
-    public void deleteShip(Long shipId){
+    public void deleteShip(Long shipId) {
         circuitBreakerFactory.create("deleteShipBreaker").run(() -> {
-        restTemplate.delete("http://player-service/ships/" + shipId);
-        return null;
-    });}
+            restTemplate.delete("http://player-service/ships/" + shipId);
+            return null;
+        });
+    }
 
-    public void deleteShot(Long shotId){
+    public void deleteShot(Long shotId) {
         circuitBreakerFactory.create("deleteShotBreaker").run(() -> {
-        restTemplate.delete("http://player-service/shots/" + shotId);
-        return null;
-    });}
+            restTemplate.delete("http://player-service/shots/" + shotId);
+            return null;
+        });
+    }
+
+    public GameDetailsDTO getGameDetails(Long gameId) {
+        GameDTO game = circuitBreakerFactory.create("getGameBreaker").run(() ->
+                restTemplate.getForObject("http://game-service/games/" + gameId, GameDTO.class)
+        );
+
+        List<PlayerDTO> players = getPlayers(gameId);
+
+        List<ShipDTO> ships = players.stream()
+                .flatMap(player -> getShips(player.id()).stream())
+                .toList();
+
+        return new GameDetailsDTO(game, players, ships);
+
+
+    }
 }
 
 

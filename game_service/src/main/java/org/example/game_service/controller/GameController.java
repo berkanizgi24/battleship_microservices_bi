@@ -52,5 +52,12 @@ public class GameController {
         gameService.deleteGame(gameId);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/{gameId}")
+    public ResponseEntity<Game> getGameById(@PathVariable Long gameId) {
+        Optional<Game> game = gameService.getGameById(gameId);
+        return game.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
 }
